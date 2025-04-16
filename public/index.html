@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waterville Wander - Road Segments</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Waterville Wander</h1>
+            <p>Explore road segments in Waterville, Maine</p>
+        </header>
+
+        <main>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <div class="controls">
+                <div class="search-box">
+                    <div class="search-input-group">
+                        <input type="text" id="searchInput" placeholder="Search road segments...">
+                        <button id="searchButton">Search</button>
+                    </div>
+                    <select id="roadTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="residential">Residential</option>
+                        <option value="footway">Footway</option>
+                        <option value="path">Path</option>
+                        <option value="track">Track</option>
+                        <option value="cycleway">Cycleway</option>
+                        <option value="unclassified">Unclassified</option>
+                    </select>
+                </div>
+
+                <div class="filters">
+                    <h3>Filters</h3>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="hasSidewalk" checked>
+                            Has Sidewalk
+                        </label>
+                        <label>
+                            <input type="checkbox" id="hasBikeLane" checked>
+                            Has Bike Lane
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>Safety Rating:</label>
+                        <select id="safetyRating">
+                            <option value="">All</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Traffic Level:</label>
+                        <select id="trafficLevel">
+                            <option value="">All</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results">
+                <h2>Road Segments</h2>
+                <div id="segmentList"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html> 
