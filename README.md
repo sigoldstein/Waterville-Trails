@@ -48,4 +48,4 @@ A web application for viewing and managing routes and segments in Waterville.
 
 ## License
 
-MIT 
+MIT
