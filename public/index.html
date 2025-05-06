@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waterville Wander - Road Segments</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .accessibility-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        .accessibility-option {
+            margin: 5px 0;
+        }
+        .accessibility-option label {
+            margin-right: 10px;
+        }
+        .accessibility-option select {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .large-text {
+            font-size: 1.2em;
+        }
+        .larger-text {
+            font-size: 1.4em;
+        }
+        .bold-text {
+            font-weight: bold;
+        }
+        .bolder-text {
+            font-weight: 900;
+        }
+        /* Color blind friendly color schemes */
+        .color-blind-friendly {
+            --road-color: #0000FF;
+            --highlight-color: #FF0000;
+        }
+        .protanopia {
+            --road-color: #1A1AFF;
+            --highlight-color: #00A3FF;
+        }
+        .deuteranopia {
+            --road-color: #0000FF;
+            --highlight-color: #FF00FF;
+        }
+        .tritanopia {
+            --road-color: #FF0000;
+            --highlight-color: #00FF00;
+        }
+    </style>
+</head>
+<body>
+    <div class="accessibility-panel">
+        <h3>Accessibility Options</h3>
+        <div class="accessibility-option">
+            <label for="text-size">Text Size:</label>
+            <select id="text-size" onchange="updateTextSize(this.value)">
+                <option value="normal">Normal</option>
+                <option value="large">Large</option>
+                <option value="larger">Larger</option>
+            </select>
+        </div>
+        <div class="accessibility-option">
+            <label for="font-weight">Font Weight:</label>
+            <select id="font-weight" onchange="updateFontWeight(this.value)">
+                <option value="normal">Normal</option>
+                <option value="bold">Bold</option>
+                <option value="bolder">Bolder</option>
+            </select>
+        </div>
+        <div class="accessibility-option">
+            <label for="color-scheme">Color Scheme:</label>
+            <select id="color-scheme" onchange="updateColorScheme(this.value)">
+                <option value="default">Default</option>
+                <option value="color-blind-friendly">Color Blind Friendly</option>
+                <option value="protanopia">Protanopia</option>
+                <option value="deuteranopia">Deuteranopia</option>
+                <option value="tritanopia">Tritanopia</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Waterville Wander</h1>
+            <p>Explore road segments in Waterville, Maine</p>
+        </header>
+
+        <main>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <div class="controls">
+                <div class="search-box">
+                    <div class="search-input-group">
+                        <input type="text" id="searchInput" placeholder="Search road segments...">
+                        <button id="searchButton">Search</button>
+                    </div>
+                    <select id="roadTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="residential">Residential</option>
+                        <option value="footway">Footway</option>
+                        <option value="path">Path</option>
+                        <option value="track">Track</option>
+                        <option value="cycleway">Cycleway</option>
+                        <option value="unclassified">Unclassified</option>
+                    </select>
+                </div>
+
+                <div class="filters">
+                    <h3>Filters</h3>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="hasSidewalk" checked>
+                            Has Sidewalk
+                        </label>
+                        <label>
+                            <input type="checkbox" id="hasBikeLane" checked>
+                            Has Bike Lane
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>Safety Rating:</label>
+                        <select id="safetyRating">
+                            <option value="">All</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Traffic Level:</label>
+                        <select id="trafficLevel">
+                            <option value="">All</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results">
+                <h2>Road Segments</h2>
+                <div id="segmentList"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        function updateTextSize(size) {
+            document.body.classList.remove('large-text', 'larger-text');
+            if (size === 'large') {
+                document.body.classList.add('large-text');
+            } else if (size === 'larger') {
+                document.body.classList.add('larger-text');
+            }
+        }
+
+        function updateFontWeight(weight) {
+            document.body.classList.remove('bold-text', 'bolder-text');
+            if (weight === 'bold') {
+                document.body.classList.add('bold-text');
+            } else if (weight === 'bolder') {
+                document.body.classList.add('bolder-text');
+            }
+        }
+
+        function updateColorScheme(scheme) {
+            document.body.classList.remove('color-blind-friendly', 'protanopia', 'deuteranopia', 'tritanopia');
+            if (scheme !== 'default') {
+                document.body.classList.add(scheme);
+            }
+            // Update map colors based on the selected scheme
+            const roadColor = getComputedStyle(document.documentElement).getPropertyValue('--road-color') || "#0000ff";
+            const highlightColor = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color') || "#ff0000";
+            
+            // Update the map styles here
+            if (window.map && window.map.getLayers) {
+                const layers = window.map.getLayers();
+                layers.forEach(layer => {
+                    if (layer.setStyle) {
+                        layer.setStyle({
+                            color: roadColor,
+                            weight: 2
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html> 
