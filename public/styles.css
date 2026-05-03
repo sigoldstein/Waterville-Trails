@@ -282,8 +282,14 @@ button {
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
 }
 
-.no-results,
-.loading {
+.results-state {
+    grid-column: 1 / -1;
+    min-height: 104px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     text-align: center;
     padding: 24px;
     border: 1px solid var(--border);
@@ -292,12 +298,33 @@ button {
     color: var(--muted);
 }
 
+.results-state h3 {
+    color: #123047;
+    font-size: 1.05rem;
+}
+
 .no-results p {
-    margin: 8px 0;
+    margin: 0;
 }
 
 .loading {
+    flex-direction: row;
     font-style: italic;
+}
+
+.loading-spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid #cbd5e1;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .accessibility-panel {

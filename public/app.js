@@ -23,9 +23,7 @@ async function loadSegments() {
     const safetyRating = document.getElementById('safetyRating').value;
     const trafficLevel = document.getElementById('trafficLevel').value;
 
-    // Show loading state
-    const segmentList = document.getElementById('segmentList');
-    segmentList.innerHTML = '<div class="loading">Loading segments...</div>';
+    showLoadingState();
 
     try {
         const response = await fetch('/api/segments/filtered', {
@@ -66,8 +64,8 @@ async function loadSegments() {
 function displayNoResultsMessage() {
     const segmentList = document.getElementById('segmentList');
     segmentList.innerHTML = `
-        <div class="no-results">
-            <p>No segments found matching your criteria.</p>
+        <div class="results-state no-results">
+            <h3>No results found</h3>
             <p>Try adjusting your filters or search terms.</p>
         </div>
     `;
@@ -78,13 +76,24 @@ function displayNoResultsMessage() {
 function displayError(message) {
     const segmentList = document.getElementById('segmentList');
     segmentList.innerHTML = `
-        <div class="no-results">
-            <p>Error loading segments: ${message}</p>
+        <div class="results-state no-results">
+            <h3>Error loading segments</h3>
+            <p>${message}</p>
             <p>Please try again or adjust your filters.</p>
         </div>
     `;
     
     clearRoadLayers();
+}
+
+function showLoadingState() {
+    const segmentList = document.getElementById('segmentList');
+    segmentList.innerHTML = `
+        <div class="results-state loading">
+            <span class="loading-spinner" aria-hidden="true"></span>
+            <span>Loading segments...</span>
+        </div>
+    `;
 }
 
 // Display segments in the list
