@@ -1,9 +1,11 @@
 let map;
 let currentSegments = [];
+let roadLayers = [];
 
 // Initialize the map
 function initMap() {
     map = L.map('map').setView([44.5520, -69.6317], 13);
+    window.map = map;
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
@@ -70,12 +72,7 @@ function displayNoResultsMessage() {
         </div>
     `;
     
-    // Clear the map
-    map.eachLayer(layer => {
-        if (layer instanceof L.Polyline) {
-            map.removeLayer(layer);
-        }
-    });
+    clearRoadLayers();
 }
 
 function displayError(message) {
@@ -87,12 +84,7 @@ function displayError(message) {
         </div>
     `;
     
-    // Clear the map
-    map.eachLayer(layer => {
-        if (layer instanceof L.Polyline) {
-            map.removeLayer(layer);
-        }
-    });
+    clearRoadLayers();
 }
 
 // Display segments in the list
@@ -132,12 +124,7 @@ function displaySegments(segments) {
 
 // Display segments on the map
 function displaySegmentsOnMap(segments) {
-    // Clear existing layers
-    map.eachLayer(layer => {
-        if (layer instanceof L.Polyline) {
-            map.removeLayer(layer);
-        }
-    });
+    clearRoadLayers();
 
     segments.forEach(segment => {
         const coordinates = JSON.parse(segment.geometry).coordinates;
@@ -149,11 +136,32 @@ function displaySegmentsOnMap(segments) {
             opacity: 0.7
         }).addTo(map);
 
+        polyline.segment = segment;
+        roadLayers.push(polyline);
+
         polyline.on('click', () => {
             highlightSegment(segment);
         });
     });
 }
+
+function clearRoadLayers() {
+    roadLayers.forEach(layer => map.removeLayer(layer));
+    roadLayers = [];
+}
+
+function applyRoadColorScheme() {
+    const roadColor = getComputedStyle(document.body).getPropertyValue('--road-color').trim();
+
+    roadLayers.forEach(layer => {
+        layer.setStyle({
+            color: roadColor || getSegmentColor(layer.segment),
+            weight: 3
+        });
+    });
+}
+
+window.applyRoadColorScheme = applyRoadColorScheme;
 
 // Get color based on segment properties
 function getSegmentColor(segment) {
